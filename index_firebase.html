@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TRYHARD WEB SOLUTION | Desarrollo Web de Alto Rendimiento</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Firebase SDK (compat, no requiere bundler) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script id="firebase-config">
+  // ====== CONFIGURA AQUÍ TU PROYECTO DE FIREBASE ======
+  // Lo encuentras en: Firebase Console → Configuración del proyecto → Tus apps → SDK setup
+  const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyA0_z2qOrtE3d28_eqj5c_IcTWM3Hqrsws",
+    authDomain: "tryhardweb-66d98.firebaseapp.com",
+    projectId: "tryhardweb-66d98",
+    storageBucket: "tryhardweb-66d98.firebasestorage.app",
+    messagingSenderId: "890285403619",
+    appId: "1:890285403619:web:15337998f877c31b1244d6"
+  };
+  // Correo fijo e invisible que se usa por dentro para el login de administrador.
+  // El usuario nunca lo ve ni lo escribe, solo escribe la contraseña.
+  const ADMIN_EMAIL = "admin@tryhardwebsolution.com";
+
+  // ====== CONFIGURA AQUÍ TU CUENTA DE CLOUDINARY (para subir fotos) ======
+  // Cloud name: Cloudinary → Dashboard (arriba)
+  // Upload preset: Cloudinary → Settings → Upload → Upload presets (debe ser "Unsigned")
+  const CLOUDINARY_CLOUD_NAME = "sgpf6ask";
+  const CLOUDINARY_UPLOAD_PRESET = "tryhardweb";
+
+  // ====== CONFIGURA AQUÍ EMAILJS (para que las cotizaciones lleguen a tu correo) ======
+  const EMAILJS_SERVICE_ID = "service_21aq9y8";
+  const EMAILJS_TEMPLATE_ID = "template_o6zjixs";
+  const EMAILJS_PUBLIC_KEY = "068D3VZ9qt2wZpxVq";
+</script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "error-container": "#93000a",
+            "surface-container-lowest": "#0e0e0e",
+            "on-surface": "#e5e2e1",
+            "surface-bright": "#3a3939",
+            "inverse-on-surface": "#313030",
+            "secondary": "#c6c6c7",
+            "on-error-container": "#ffdad6",
+            "surface-container-low": "#1c1b1b",
+            "on-tertiary": "#3a3000",
+            "surface-variant": "#353534",
+            "on-tertiary-fixed": "#221b00",
+            "tertiary-container": "#ffe170",
+            "secondary-fixed-dim": "#c6c6c7",
+            "surface-container-high": "#2a2a2a",
+            "on-tertiary-fixed-variant": "#544600",
+            "primary": "#ffffff",
+            "primary-container": "#fee400",
+            "on-secondary-fixed": "#1a1c1c",
+            "on-tertiary-container": "#776300",
+            "on-primary-fixed-variant": "#504700",
+            "outline": "#979177",
+            "error": "#ffb4ab",
+            "on-secondary-container": "#b4b5b5",
+            "surface-dim": "#131313",
+            "secondary-fixed": "#e2e2e2",
+            "inverse-surface": "#e5e2e1",
+            "secondary-container": "#454747",
+            "on-secondary-fixed-variant": "#454747",
+            "tertiary": "#ffffff",
+            "on-background": "#e5e2e1",
+            "surface-container-highest": "#353534",
+            "on-primary-fixed": "#201c00",
+            "outline-variant": "#4b4731",
+            "surface": "#131313",
+            "on-primary-container": "#716500",
+            "primary-fixed": "#fee400",
+            "on-error": "#690005",
+            "tertiary-fixed-dim": "#e9c400",
+            "surface-container": "#201f1f",
+            "on-primary": "#373100",
+            "on-secondary": "#2f3131",
+            "surface-tint": "#dec800",
+            "tertiary-fixed": "#ffe170",
+            "background": "#131313",
+            "primary-fixed-dim": "#dec800",
+            "on-surface-variant": "#cec7aa",
+            "inverse-primary": "#6a5f00"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-1": "0.25rem",
+            "gutter-mobile": "1rem",
+            "margin-tablet": "2rem",
+            "gutter-desktop": "2rem",
+            "gutter-tablet": "1.5rem",
+            "space-24": "6rem",
+            "margin-desktop": "4rem",
+            "margin-mobile": "1rem",
+            "space-3": "0.75rem",
+            "space-8": "2rem",
+            "space-4": "1rem",
+            "space-12": "3rem",
+            "space-16": "4rem",
+            "space-2": "0.5rem",
+            "space-6": "1.5rem"
+          },
+          "fontFamily": {
+            "headline-lg-mobile": ["Space Grotesk", "sans-serif"],
+            "label-mono-md": ["JetBrains Mono", "monospace"],
+            "display-hero": ["Space Grotesk", "sans-serif"],
+            "headline-lg": ["Space Grotesk", "sans-serif"],
+            "label-mono-sm": ["JetBrains Mono", "monospace"],
+            "body-md": ["Geist", "sans-serif"],
+            "headline-md": ["Space Grotesk", "sans-serif"],
+            "display-hero-mobile": ["Space Grotesk", "sans-serif"],
+            "body-lg": ["Geist", "sans-serif"],
+            "headline-sm": ["Space Grotesk", "sans-serif"],
+            "body-sm": ["Geist", "sans-serif"],
+            "label-mono-lg": ["JetBrains Mono", "monospace"]
+          },
+          "fontSize": {
+            "headline-lg-mobile": ["28px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "label-mono-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500" }],
+            "display-hero": ["64px", { "lineHeight": "68px", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+            "headline-lg": ["40px", { "lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "600" }],
+            "label-mono-sm": ["10px", { "lineHeight": "12px", "letterSpacing": "0.08em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-md": ["24px", { "lineHeight": "28px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "display-hero-mobile": ["36px", { "lineHeight": "40px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "body-lg": ["16px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "headline-sm": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "label-mono-lg": ["14px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "500" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-hard-shadow {
+      box-shadow: 4px 4px 0px 0px #fee400;
+    }
+    .custom-dark-shadow {
+      box-shadow: 3px 3px 0px 0px #000000;
+    }
+    @keyframes pulse-yellow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.85); }
+    }
+    .ping-box {
+      animation: pulse-yellow 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+
+    /* ====== MODO ADMINISTRADOR / EDICIÓN ====== */
+    .servicio-field[contenteditable="true"] {
+      outline: 1px dashed #fee400;
+      outline-offset: 2px;
+      cursor: text;
+    }
+    .servicio-field[contenteditable="true"]:hover {
+      background-color: rgba(254, 228, 0, 0.08);
+    }
+    .proyecto-field[contenteditable="true"] {
+      outline: 1px dashed #fee400;
+      outline-offset: 2px;
+      cursor: text;
+    }
+    .proyecto-field[contenteditable="true"]:hover {
+      background-color: rgba(254, 228, 0, 0.08);
+    }
+    body.admin-edit-active .section-edit-btn {
+      display: inline-flex !important;
+    }
+    #section-modal-overlay {
+      position: fixed; inset: 0; z-index: 350;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    #section-modal-overlay.open { display: flex; }
+    #section-modal-box {
+      background: #131313;
+      border: 1px solid #fee400;
+      width: 100%;
+      max-width: 520px;
+      max-height: 88vh;
+      overflow-y: auto;
+      padding: 24px;
+      font-family: "JetBrains Mono", monospace;
+    }
+    #section-modal-box label {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #cec7aa;
+      margin-bottom: 6px;
+      margin-top: 16px;
+    }
+    #section-modal-box input, #section-modal-box textarea {
+      width: 100%;
+      background: #1c1b1b;
+      border: 1px solid #4b4731;
+      color: #e5e2e1;
+      padding: 10px 12px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 13px;
+    }
+    #section-modal-box textarea { min-height: 90px; resize: vertical; }
+    #admin-toolbar {
+      position: fixed;
+      bottom: 88px;
+      right: 16px;
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-end;
+    }
+    @media (min-width: 768px) {
+      #admin-toolbar { bottom: 24px; }
+    }
+    body.admin-edit-active #admin-toolbar { display: flex; }
+    .admin-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      border: 1px solid #979177;
+      cursor: pointer;
+      box-shadow: 3px 3px 0px 0px #000000;
+      white-space: nowrap;
+    }
+    .admin-btn-save { background: #fee400; color: #373100; }
+    .admin-btn-quotes { background: #201f1f; color: #fee400; border-color: #fee400; }
+    .admin-btn-exit { background: #131313; color: #e5e2e1; }
+
+    #admin-modal-overlay, #quotes-panel-overlay {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,0.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    #admin-modal-overlay.open, #quotes-panel-overlay.open { display: flex; }
+    #admin-modal-box {
+      background: #1c1b1b;
+      border: 1px solid #fee400;
+      padding: 24px;
+      width: 100%;
+      max-width: 340px;
+      font-family: "JetBrains Mono", monospace;
+    }
+    #admin-modal-box input {
+      width: 100%;
+      background: #131313;
+      border: 1px solid #4b4731;
+      color: #e5e2e1;
+      padding: 10px 12px;
+      margin-top: 8px;
+      margin-bottom: 12px;
+    }
+    #admin-modal-error { color: #ffb4ab; font-size: 11px; min-height: 14px; margin-bottom: 8px; }
+    .shake { animation: shake-anim 0.3s; }
+    @keyframes shake-anim {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    #quotes-panel-box {
+      background: #131313;
+      border: 1px solid #4b4731;
+      width: 100%;
+      max-width: 720px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      font-family: "JetBrains Mono", monospace;
+    }
+    #quotes-list { overflow-y: auto; padding: 16px; }
+    .quote-card {
+      border: 1px solid #353534;
+      background: #1c1b1b;
+      padding: 12px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      color: #cec7aa;
+    }
+    .quote-card .qname { color: #fee400; font-weight: 700; font-size: 13px; }
+    .quote-card select {
+      background: #201f1f; color: #e5e2e1; border: 1px solid #4b4731;
+      font-size: 11px; padding: 2px 6px; margin-top: 6px;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased selection:bg-primary-fixed selection:text-surface-container-lowest pb-24 md:pb-0">
+<!-- TopAppBar: Shared Component JSON Execution -->
+<header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-space-4 py-space-3 bg-surface border-b border-surface-variant">
+<div class="flex items-center gap-space-2 cursor-pointer select-none" id="admin-trigger" title="">
+<span class="material-symbols-outlined text-primary-fixed text-xl" data-icon="terminal">terminal</span>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="text-headline-sm font-headline-sm font-bold tracking-tight text-primary-fixed" data-edit-key="logo_nombre">TRIHARD</span>
+<span class="text-label-mono-sm font-label-mono-sm text-secondary uppercase tracking-widest hidden sm:inline" data-edit-key="logo_sub">WEB SOLUTION</span>
+</div>
+<span class="text-[9px] font-label-mono-sm text-secondary-fixed-dim tracking-tighter" data-edit-key="logo_tagline">IDEAS // SITIOS WEB // RESULTADOS</span>
+</div>
+</div>
+<!-- Desktop Navigation Cluster -->
+<nav class="hidden md:flex items-center gap-space-4">
+<a class="text-primary-fixed font-label-mono-sm uppercase hover:text-primary-fixed transition-colors duration-75" href="#inicio" data-edit-key="menu_inicio">Inicio</a>
+<a class="text-on-surface-variant font-label-mono-sm uppercase hover:text-primary-fixed transition-colors duration-75" href="#servicios" data-edit-key="menu_servicios">Servicios</a>
+<a class="text-on-surface-variant font-label-mono-sm uppercase hover:text-primary-fixed transition-colors duration-75" href="#portafolio" data-edit-key="menu_portafolio">Portafolio</a>
+<a class="text-on-surface-variant font-label-mono-sm uppercase hover:text-primary-fixed transition-colors duration-75" href="#contacto" data-edit-key="menu_contacto">Contacto</a>
+<button class="section-edit-btn hidden items-center gap-1 bg-transparent border border-dashed border-primary-fixed text-primary-fixed px-2 py-1 text-label-mono-sm font-label-mono-sm uppercase" data-section="header" type="button">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</nav>
+<!-- Trailing Action -->
+<div class="flex items-center gap-space-3">
+<div class="hidden sm:flex items-center gap-2 px-space-2 py-0.5 bg-surface-container border border-surface-variant text-label-mono-sm font-label-mono-sm text-primary-fixed">
+<span class="w-1.5 h-1.5 bg-primary-fixed inline-block ping-box"></span>
+<span>SYS.ONLINE</span>
+</div>
+<a class="wa-link flex items-center gap-1.5 bg-primary-fixed text-on-primary-fixed px-space-3 py-1.5 text-label-mono-sm font-label-mono-sm font-bold active:translate-x-0.5 active:translate-y-0.5 duration-75 hover:bg-tertiary-container transition-all" href="https://wa.me/19396493269" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-sm" data-icon="chat">chat</span>
+<span class="hidden xs:inline">WhatsApp</span>
+</a>
+</div>
+</header>
+<!-- Hero Section -->
+<section class="relative pt-24 pb-12 px-space-4 md:px-margin-desktop max-w-7xl mx-auto border-x border-surface-variant/40 mt-1" id="inicio">
+<!-- Top System Breadcrumb -->
+<div class="flex items-center gap-space-2 mb-space-4">
+<span class="w-2 h-2 bg-primary-fixed inline-block"></span>
+<p class="text-label-mono-sm font-label-mono-sm uppercase text-secondary tracking-widest">
+        DESARROLLO WEB PARA NEGOCIOS REALES
+      </p>
+</div>
+<!-- Main Headline & Subtitle -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-6 items-start">
+<div class="lg:col-span-8">
+<h1 class="text-display-hero-mobile md:text-display-hero font-display-hero uppercase text-primary tracking-tight leading-none mb-space-4">
+<span data-edit-key="hero_titulo_1">TRIHARD</span> <span class="text-primary-fixed" data-edit-key="hero_titulo_2">WEB SOLUTION</span><span class="text-primary-fixed animate-pulse">|</span>
+</h1>
+<p class="text-body-lg font-body-lg text-secondary max-w-2xl mb-space-6 border-l-2 border-primary-fixed pl-space-3" data-edit-key="hero_subtitle">
+          Sitios web que trabajan para ti. Modernos, rápidos y fáciles de administrar. Optimizados con arquitectura técnica de alta latencia cero.
+        </p>
+<!-- CTA Cluster -->
+<div class="flex flex-wrap items-center gap-space-3 mb-space-8">
+<a class="flex items-center justify-center gap-space-2 bg-primary-fixed text-on-primary-fixed px-space-6 py-space-3 text-label-mono-md font-label-mono-md font-bold uppercase hover:bg-tertiary-container transition-colors duration-75 custom-hard-shadow" href="#contacto">
+<span class="material-symbols-outlined text-base" data-icon="arrow_forward">arrow_forward</span>
+<span>COTIZA TU PROYECTO</span>
+</a>
+<a class="flex items-center justify-center gap-space-2 bg-surface-container border border-surface-variant text-primary px-space-6 py-space-3 text-label-mono-md font-label-mono-md uppercase hover:border-primary-fixed hover:text-primary-fixed transition-colors duration-75" href="#portafolio">
+<span class="material-symbols-outlined text-base text-primary-fixed" data-icon="terminal">terminal</span>
+<span>Ver Portafolio</span>
+</a>
+<button class="section-edit-btn hidden items-center justify-center gap-space-2 bg-transparent border border-dashed border-primary-fixed text-primary-fixed px-space-4 py-space-3 text-label-mono-sm font-label-mono-sm uppercase" data-section="hero" type="button">
+<span class="material-symbols-outlined text-sm">edit</span>
+<span>Editar Inicio</span>
+</button>
+</div>
+<div class="flex items-center gap-space-2 text-label-mono-sm font-label-mono-sm text-secondary">
+<span class="material-symbols-outlined text-sm text-primary-fixed animate-bounce" data-icon="south">south</span>
+<span>SCROLLEA // EXPLORAR MATRIZ</span>
+</div>
+</div>
+<!-- Hero Visual Instrument Panel (Mobile Optimized) -->
+<div class="lg:col-span-4 w-full bg-surface-container-low border border-surface-variant p-space-4 relative">
+<div class="flex items-center justify-between border-b border-surface-variant pb-space-2 mb-space-3">
+<span class="text-label-mono-sm font-label-mono-sm text-primary-fixed">NODE_CONFIG: LIVE</span>
+<span class="text-label-mono-sm font-label-mono-sm text-secondary">ID: PR-787</span>
+</div>
+<div class="relative w-full aspect-[4/3] bg-surface-container-lowest border border-surface-variant overflow-hidden mb-space-3">
+<img class="w-full h-full object-cover grayscale contrast-125 opacity-85 hover:opacity-100 hover:grayscale-0 transition-all duration-300" id="hero-photo-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbNXc6jNmf4MgBWQIHndiE9q_mtaZ4nsdRUgn0q84o3eXx1sbZGfm7B8gL5pXl5cyBQYMefUz3Q7s1kHbygbzr8pImrCExYV2qIyrwMApFCBxQ-LidZ4Xx-Ox8iZer_4PTPf8sbivK7posfe55Q9UR7u5jn7Sgg67574SLvYfhrZL7W8xI0pUb0142iOVeY25L-WYmGYFKaGv1WAMxLLz-uZki_tTiW-FVr4htUIKt1wtb0mRPGhA0MKr_JNeN6OSs"/>
+<div class="absolute bottom-0 inset-x-0 p-space-2 bg-surface-container-lowest/90 border-t border-surface-variant flex items-center justify-between">
+<span class="text-label-mono-sm font-label-mono-sm text-primary-fixed font-bold" data-edit-key="hero_caption">MÁS QUE UNA PÁGINA, ES TU PRÓXIMO NIVEL.</span>
+<span class="w-2 h-2 bg-primary-fixed inline-block"></span>
+</div>
+<div class="hidden image-edit-controls absolute top-2 right-2 flex-col gap-1">
+<button type="button" class="image-upload-btn bg-primary-fixed text-on-primary-fixed text-label-mono-sm font-bold px-2 py-1" data-img-key="hero_photo" data-target="hero-photo-img">Subir foto</button>
+<button type="button" class="image-remove-btn bg-error text-on-error text-label-mono-sm font-bold px-2 py-1" data-img-key="hero_photo" data-target="hero-photo-img">Quitar</button>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 text-label-mono-sm font-label-mono-sm text-secondary">
+<div class="bg-surface-container p-2 border border-surface-variant">
+<span class="block text-[10px] text-secondary">SPEED_INDEX</span>
+<span class="text-primary font-bold">0.4s FCP</span>
+</div>
+<div class="bg-surface-container p-2 border border-surface-variant">
+<span class="block text-[10px] text-secondary">UPTIME</span>
+<span class="text-primary-fixed font-bold">99.98%</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Marcas / Negocios que confían -->
+<section class="border-y border-surface-variant bg-surface-container-lowest py-space-6">
+<div class="max-w-7xl mx-auto px-space-4 md:px-margin-desktop">
+<p class="text-center text-label-mono-sm font-label-mono-sm text-secondary uppercase tracking-widest mb-space-4">
+        NEGOCIOS QUE CONFÍAN EN SOLUCIONES DIGITALES
+      </p>
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-space-2">
+<div class="flex items-center justify-center p-space-3 bg-surface-container border border-surface-variant text-label-mono-md font-label-mono-md text-on-surface hover:border-primary-fixed transition-colors">
+          PAWDOCATION PR
+        </div>
+<div class="flex items-center justify-center p-space-3 bg-surface-container border border-surface-variant text-label-mono-md font-label-mono-md text-on-surface hover:border-primary-fixed transition-colors">
+          HAPPY CHALETS
+        </div>
+<div class="flex items-center justify-center p-space-3 bg-surface-container border border-surface-variant text-label-mono-md font-label-mono-md text-on-surface hover:border-primary-fixed transition-colors">
+          MANOS CREATIVAS
+        </div>
+<div class="flex items-center justify-center p-space-3 bg-surface-container border border-surface-variant text-label-mono-md font-label-mono-md text-on-surface hover:border-primary-fixed transition-colors">
+          EPW WRESTLING
+        </div>
+<div class="flex items-center justify-center p-space-3 bg-surface-container border border-surface-variant text-label-mono-md font-label-mono-md text-on-surface hover:border-primary-fixed transition-colors">
+          ZOOMIES PR
+        </div>
+<div class="flex items-center justify-center p-space-3 bg-surface-container-high border border-dashed border-primary-fixed text-label-mono-md font-label-mono-md text-primary-fixed font-bold">
+          + TU NEGOCIO AQUÍ
+        </div>
+</div>
+</div>
+</section>
+<!-- Servicios Section (Bento Grid) -->
+<section class="py-space-12 px-space-4 md:px-margin-desktop max-w-7xl mx-auto border-x border-surface-variant/40" id="servicios">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-space-8 gap-space-4">
+<div>
+<div class="flex items-center gap-space-2 text-label-mono-sm font-label-mono-sm text-primary-fixed mb-space-1 uppercase">
+<span class="material-symbols-outlined text-sm" data-icon="dns">dns</span>
+<span>CATÁLOGO DE SERVICIOS</span>
+</div>
+<h2 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg uppercase text-primary leading-tight">
+          SOLUCIONES WEB PARA HACER <span class="text-primary-fixed bg-surface-container-high px-2">CRECER</span> TU NEGOCIO
+        </h2>
+<p class="text-body-md font-body-md text-secondary mt-space-2 max-w-xl" data-edit-key="servicios_desc">
+          Diseño, desarrollo y soporte para que te enfoques en lo que haces mejor, mientras tu página trabaja las 24 horas por ti.
+        </p>
+</div>
+<a class="inline-flex items-center gap-space-2 text-label-mono-md font-label-mono-md text-primary-fixed border-b border-primary-fixed pb-1 hover:text-primary transition-colors" href="#contacto">
+<span>Conoce todos los servicios</span>
+<span class="material-symbols-outlined text-sm" data-icon="east">east</span>
+</a>
+</div>
+<!-- Bento Grid Services (dinámico, se genera con JS desde servicios_json) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-4" id="servicios-grid"></div>
+<div class="hidden mt-space-4" id="btn-add-servicio-wrap">
+<button class="admin-btn admin-btn-save" id="btn-add-servicio" type="button">
+  <span class="material-symbols-outlined text-sm">add</span> Agregar servicio
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-4 mt-space-4">
+<!-- Item 6: Diagnostic Audit Teaser -->
+<div class="bg-surface-container-high border border-primary-fixed p-space-6 flex flex-col justify-between relative">
+<button class="section-edit-btn hidden absolute top-2 right-2 items-center gap-1 bg-transparent border border-dashed border-primary-fixed text-primary-fixed px-2 py-1 text-label-mono-sm font-label-mono-sm uppercase z-10" data-section="auditoria" type="button">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+<div>
+<div class="flex items-center justify-between mb-space-4">
+<span class="text-label-mono-sm font-label-mono-sm text-primary-fixed font-bold" data-edit-key="servicio_6_badge">AUDITORÍA RÁPIDA</span>
+<span class="material-symbols-outlined text-primary-fixed" data-icon="bolt">bolt</span>
+</div>
+<h3 class="text-headline-sm font-headline-sm text-primary uppercase mb-space-2" data-edit-key="servicio_6_titulo">¿Ya tienes un sitio web?</h3>
+<p class="text-body-md font-body-md text-secondary" data-edit-key="servicio_6_desc">
+            Evaluamos velocidad, experiencia móvil y seguridad sin costo. Detecta cuellos de botella inmediatamente.
+          </p>
+</div>
+<a class="mt-space-4 bg-primary-fixed text-on-primary-fixed py-2 px-3 text-center text-label-mono-sm font-label-mono-sm font-bold uppercase hover:bg-white transition-colors" href="#contacto" data-edit-key="servicio_6_boton">
+          Solicitar Diagnóstico
+        </a>
+</div>
+</div>
+</section>
+<!-- Stats & Trust Banner -->
+<section class="border-y border-surface-variant bg-surface-container-low">
+<div class="max-w-7xl mx-auto px-space-4 md:px-margin-desktop py-space-8">
+<div class="grid grid-cols-2 md:grid-cols-5 gap-space-4 border-b border-surface-variant pb-space-8 mb-space-8">
+<div class="flex flex-col">
+<span class="text-headline-lg font-headline-lg text-primary-fixed font-bold" data-edit-key="stats_proyectos">50+</span>
+<span class="text-label-mono-sm font-label-mono-sm text-secondary uppercase">Proyectos Completados</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center text-primary-fixed">
+<span class="material-symbols-outlined text-sm" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-label-mono-sm font-label-mono-sm text-secondary uppercase mt-1">Clientes Satisfechos</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-sm font-headline-sm text-primary uppercase font-bold" data-edit-key="stats_rapidos">100%</span>
+<span class="text-label-mono-sm font-label-mono-sm text-secondary uppercase">Sitios Rápidos y Optimizados</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-sm font-headline-sm text-primary uppercase font-bold" data-edit-key="stats_soporte">24/7</span>
+<span class="text-label-mono-sm font-label-mono-sm text-secondary uppercase">Soporte Confiable</span>
+</div>
+<div class="flex flex-col col-span-2 md:col-span-1">
+<span class="text-headline-sm font-headline-sm text-primary-fixed uppercase font-bold">PR &amp; GLOBAL</span>
+<span class="text-label-mono-sm font-label-mono-sm text-secondary uppercase">Puerto Rico y Remoto</span>
+</div>
+</div>
+<button class="section-edit-btn hidden items-center gap-space-2 bg-transparent border border-dashed border-primary-fixed text-primary-fixed px-space-4 py-2 text-label-mono-sm font-label-mono-sm uppercase mb-space-4" data-section="stats" type="button">
+<span class="material-symbols-outlined text-sm">edit</span>
+<span>Editar Estadísticas</span>
+</button>
+<!-- Institutional Quote Banner -->
+<div class="bg-primary-fixed text-on-primary-fixed p-space-6 flex flex-col md:flex-row items-center justify-between gap-space-4">
+<div>
+<p class="text-headline-md font-headline-md uppercase font-bold tracking-tight" data-edit-key="quote_banner">
+            “BUENAS PÁGINAS, MEJORES OPORTUNIDADES.”
+          </p>
+<span class="text-label-mono-sm font-label-mono-sm uppercase tracking-widest font-bold opacity-80">
+            — TRIHARD WEB SOLUTION // CODE ARCHITECTURE
+          </span>
+</div>
+<a class="bg-surface-container-lowest text-primary-fixed px-space-6 py-space-3 text-label-mono-md font-label-mono-md font-bold uppercase whitespace-nowrap hover:bg-surface transition-colors" href="#contacto">
+          Inicia Ahora
+        </a>
+</div>
+</div>
+</section>
+<!-- Portafolio / Proyectos Reales -->
+<section class="py-space-12 px-space-4 md:px-margin-desktop max-w-7xl mx-auto border-x border-surface-variant/40" id="portafolio">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-space-8 gap-space-4">
+<div>
+<div class="flex items-center gap-space-2 text-label-mono-sm font-label-mono-sm text-primary-fixed mb-space-1 uppercase">
+<span class="material-symbols-outlined text-sm" data-icon="dataset">dataset</span>
+<span>CASOS DE ÉXITO</span>
+</div>
+<h2 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg uppercase text-primary">
+          PROYECTOS REALES, <span class="text-primary-fixed">RESULTADOS REALES</span>
+</h2>
+</div>
+<a class="bg-primary-fixed text-on-primary-fixed px-space-4 py-2 text-label-mono-sm font-label-mono-sm font-bold uppercase hover:bg-tertiary-container transition-colors" href="#contacto">
+        Ver más proyectos →
+      </a>
+</div>
+<!-- Grid de Proyectos (dinámico) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-4" id="portafolio-grid"></div>
+<div class="hidden mt-space-4" id="btn-add-proyecto-wrap">
+<button class="admin-btn admin-btn-save" id="btn-add-proyecto" type="button">
+  <span class="material-symbols-outlined text-sm">add</span> Agregar proyecto
+</button>
+<button class="admin-btn admin-btn-save" id="btn-save-portafolio" type="button">
+  <span class="material-symbols-outlined text-sm">save</span> Guardar Portafolio
+</button>
+</div>
+</section>
+<!-- Contacto & Formulario: 'Hablemos / Contáctame' -->
+<section class="py-space-12 px-space-4 md:px-margin-desktop max-w-7xl mx-auto border-x border-surface-variant/40" id="contacto">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-8">
+<!-- Contact Info Left Column -->
+<div class="lg:col-span-6 flex flex-col justify-between">
+<div>
+<span class="text-label-mono-sm font-label-mono-sm text-primary-fixed uppercase tracking-widest">HABLEMOS HOY</span>
+<h2 class="text-display-hero-mobile md:text-headline-lg font-headline-lg uppercase text-primary mt-1 mb-space-2">
+            CONTÁCTAME
+          </h2>
+<p class="text-body-lg font-body-lg text-secondary mb-space-6">
+            Cuéntame tu idea y la hacemos realidad con código limpio, arquitectura sólida y enfoque comercial directo.
+          </p>
+<button class="section-edit-btn hidden items-center gap-space-2 bg-transparent border border-dashed border-primary-fixed text-primary-fixed px-space-4 py-2 text-label-mono-sm font-label-mono-sm uppercase mb-space-4" data-section="contacto" type="button">
+<span class="material-symbols-outlined text-sm">edit</span>
+<span>Editar Contacto</span>
+</button>
+<!-- Contact Details Matrix -->
+<div class="space-y-space-3 mb-space-8 font-label-mono-md">
+<a class="tel-link flex items-center gap-space-3 p-space-3 bg-surface-container border border-surface-variant text-primary hover:border-primary-fixed transition-colors" href="tel:+19396493269">
+<span class="material-symbols-outlined text-primary-fixed" data-icon="call">call</span>
+<span data-edit-key="telefono_display">+1 (939) 649-3269</span>
+</a>
+<a class="mail-link flex items-center gap-space-3 p-space-3 bg-surface-container border border-surface-variant text-primary hover:border-primary-fixed transition-colors" href="mailto:tuemail@trihardwebsolution.com">
+<span class="material-symbols-outlined text-primary-fixed" data-icon="mail">mail</span>
+<span class="truncate" data-edit-key="email_display">tuemail@trihardwebsolution.com</span>
+</a>
+<div class="flex items-center gap-space-3 p-space-3 bg-surface-container border border-surface-variant text-primary">
+<span class="material-symbols-outlined text-primary-fixed" data-icon="location_on">location_on</span>
+<span data-edit-key="ubicacion">Puerto Rico | Remoto a Nivel Global</span>
+</div>
+</div>
+</div>
+<!-- Social Icons Technical Hub -->
+<div>
+<div class="flex items-center justify-between mb-space-2">
+<span class="text-label-mono-sm font-label-mono-sm text-secondary uppercase">REDES SOCIALES // PROTOCOLOS ACTIVOS:</span>
+<button class="section-edit-btn hidden items-center gap-1 bg-transparent border border-dashed border-primary-fixed text-primary-fixed px-2 py-1 text-label-mono-sm font-label-mono-sm uppercase" data-section="redes" type="button">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</div>
+<div class="flex flex-wrap gap-space-2">
+<a class="w-10 h-10 bg-surface-container border border-surface-variant flex items-center justify-center text-secondary hover:text-primary-fixed hover:border-primary-fixed transition-colors" href="#" id="social-ig" target="_blank" rel="noopener noreferrer">
+<span class="text-xs font-label-mono-sm font-bold">IG</span>
+</a>
+<a class="w-10 h-10 bg-surface-container border border-surface-variant flex items-center justify-center text-secondary hover:text-primary-fixed hover:border-primary-fixed transition-colors" href="#" id="social-fb" target="_blank" rel="noopener noreferrer">
+<span class="text-xs font-label-mono-sm font-bold">FB</span>
+</a>
+<a class="w-10 h-10 bg-surface-container border border-surface-variant flex items-center justify-center text-secondary hover:text-primary-fixed hover:border-primary-fixed transition-colors" href="#" id="social-tk" target="_blank" rel="noopener noreferrer">
+<span class="text-xs font-label-mono-sm font-bold">TK</span>
+</a>
+<a class="w-10 h-10 bg-surface-container border border-surface-variant flex items-center justify-center text-secondary hover:text-primary-fixed hover:border-primary-fixed transition-colors" href="#" id="social-yt" target="_blank" rel="noopener noreferrer">
+<span class="text-xs font-label-mono-sm font-bold">YT</span>
+</a>
+<a class="w-10 h-10 bg-surface-container border border-surface-variant flex items-center justify-center text-secondary hover:text-primary-fixed hover:border-primary-fixed transition-colors" href="#" id="social-gh" target="_blank" rel="noopener noreferrer">
+<span class="text-xs font-label-mono-sm font-bold">GH</span>
+</a>
+<a class="w-10 h-10 bg-surface-container border border-surface-variant flex items-center justify-center text-secondary hover:text-primary-fixed hover:border-primary-fixed transition-colors" href="#" id="social-in" target="_blank" rel="noopener noreferrer">
+<span class="text-xs font-label-mono-sm font-bold">IN</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Action Panel Form Right Column -->
+<div class="lg:col-span-6 bg-surface-container-low border border-surface-variant p-space-6">
+<div class="flex items-center justify-between border-b border-surface-variant pb-space-3 mb-space-4">
+<span class="text-label-mono-sm font-label-mono-sm text-primary-fixed font-bold">FORM_INPUT // DISPATCH</span>
+<span class="text-label-mono-sm font-label-mono-sm text-secondary">TIEMPO RESPUESTA: &lt;2H</span>
+</div>
+<form class="space-y-space-4" id="cotizacion-form">
+<div>
+<label class="block text-label-mono-sm font-label-mono-sm text-secondary uppercase mb-1">Nombre o Empresa</label>
+<input class="w-full bg-surface-container border border-surface-variant px-space-4 py-space-3 text-primary text-body-md focus:border-primary-fixed focus:ring-0 rounded-none placeholder:text-secondary-container" id="cf-nombre" name="nombre" placeholder="Ej. Carlos Rivera - Negocio PR" required type="text"/>
+</div>
+<div>
+<label class="block text-label-mono-sm font-label-mono-sm text-secondary uppercase mb-1">Correo Electrónico / Teléfono</label>
+<input class="w-full bg-surface-container border border-surface-variant px-space-4 py-space-3 text-primary text-body-md focus:border-primary-fixed focus:ring-0 rounded-none placeholder:text-secondary-container" id="cf-contacto" name="contacto" placeholder="tunombre@empresa.com o 787-000-0000" required type="text"/>
+</div>
+<div>
+<label class="block text-label-mono-sm font-label-mono-sm text-secondary uppercase mb-1">Servicio de Interés</label>
+<select class="w-full bg-surface-container border border-surface-variant px-space-4 py-space-3 text-primary text-body-md focus:border-primary-fixed focus:ring-0 rounded-none" id="cf-servicio" name="servicio">
+<option>Sitio Web Profesional</option>
+<option>Tienda Online (E-Commerce)</option>
+<option>Sistema de Citas / Reservas</option>
+<option>Mantenimiento y Soporte</option>
+<option>Auditoría y Optimización</option>
+</select>
+<div class="hidden mt-2 p-space-3 bg-surface-container-high border border-primary-fixed text-body-sm font-label-mono-sm text-secondary whitespace-pre-line" id="cf-servicio-editor" data-edit-key="servicio_opciones">Sitio Web Profesional
+Tienda Online (E-Commerce)
+Sistema de Citas / Reservas
+Mantenimiento y Soporte
+Auditoría y Optimización</div>
+<span class="hidden text-label-mono-sm text-secondary" id="cf-servicio-editor-hint">☝️ Edita estas opciones (una por línea) — reemplazan lo que aparece arriba al guardar.</span>
+</div>
+<div>
+<label class="block text-label-mono-sm font-label-mono-sm text-secondary uppercase mb-1">Detalles del Proyecto</label>
+<textarea class="w-full bg-surface-container border border-surface-variant px-space-4 py-space-3 text-primary text-body-md focus:border-primary-fixed focus:ring-0 rounded-none placeholder:text-secondary-container" id="cf-mensaje" name="mensaje" placeholder="Explica brevemente qué objetivos buscas conseguir..." rows="4"></textarea>
+</div>
+<p class="text-label-mono-sm font-label-mono-sm hidden" id="cf-status"></p>
+<div class="space-y-space-3 pt-space-2">
+<button class="w-full bg-primary-fixed text-on-primary-fixed py-space-3 text-label-mono-md font-label-mono-md font-bold uppercase hover:bg-tertiary-container transition-colors custom-dark-shadow flex items-center justify-center gap-2" id="cf-submit" type="submit">
+<span class="material-symbols-outlined text-base" data-icon="send">send</span>
+<span data-edit-key="cf_boton_enviar">Enviar Mensaje</span>
+</button>
+<a class="wa-link w-full bg-surface-container-high border border-surface-variant text-primary py-space-3 text-label-mono-md font-label-mono-md font-bold uppercase hover:border-primary-fixed hover:text-primary-fixed transition-colors flex items-center justify-center gap-2" href="https://wa.me/19396493269" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-primary-fixed text-base" data-icon="chat">chat</span>
+<span data-edit-key="cf_boton_whatsapp">Chatea por WhatsApp</span>
+</a>
+</div>
+</form>
+</div>
+</div>
+</section>
+<!-- Footer Component: Shared Component JSON Execution -->
+<footer class="w-full px-space-4 py-space-8 border-t border-surface-variant bg-surface-container-lowest flex flex-col gap-space-4">
+<div class="max-w-7xl mx-auto w-full flex flex-col md:flex-row items-center justify-between gap-space-4">
+<div class="flex items-center gap-space-3">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface tracking-tight">TRIHARD WEB SOLUTION</span>
+<span class="text-label-mono-sm font-label-mono-sm text-secondary hidden sm:inline">| LATENCY_ZERO</span>
+</div>
+<div class="flex items-center gap-space-4 text-label-mono-sm font-label-mono-sm">
+<a class="text-on-surface-variant hover:text-primary-fixed transition-colors duration-75" href="#inicio">Status</a>
+<a class="text-on-surface-variant hover:text-primary-fixed transition-colors duration-75" href="#servicios">Specs</a>
+<a class="text-on-surface-variant hover:text-primary-fixed transition-colors duration-75" href="#portafolio">Security</a>
+<a class="text-primary-fixed underline hover:text-primary-fixed transition-colors duration-75" href="#contacto">Telemetry</a>
+</div>
+</div>
+<div class="max-w-7xl mx-auto w-full pt-space-4 border-t border-surface-variant/40 flex flex-col sm:flex-row items-center justify-between text-label-mono-sm font-label-mono-sm text-secondary gap-2">
+<p data-edit-key="footer_copyright">© 2025 TRYHARD WEB SOLUTION // LATENCY_ZERO // ALL RIGHTS RESERVED</p>
+<p class="text-primary-fixed" data-edit-key="footer_tagline">Diseñado y desarrollado con disciplina.</p>
+<button class="section-edit-btn hidden items-center gap-1 bg-transparent border border-dashed border-primary-fixed text-primary-fixed px-2 py-1 text-label-mono-sm font-label-mono-sm uppercase" data-section="footer" type="button">
+<span class="material-symbols-outlined text-sm">edit</span>
+<span>Editar Pie</span>
+</button>
+</div>
+</footer>
+<!-- BottomNavBar: Shared Component JSON Execution for Mobile Devices -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-space-2 py-space-1 border-t border-surface-variant bg-surface-container-lowest">
+<!-- Tab 1: Core (Active) -->
+<a class="flex flex-col items-center justify-center text-primary-fixed bg-surface-container border-t-2 border-primary-fixed px-space-2 py-space-1 transition-colors" href="#inicio">
+<span class="material-symbols-outlined text-base" data-icon="terminal">terminal</span>
+<span class="text-label-mono-sm font-label-mono-sm mt-0.5">Core</span>
+</a>
+<!-- Tab 2: Matrix -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-space-2 py-space-1 hover:text-primary-fixed transition-colors" href="#servicios">
+<span class="material-symbols-outlined text-base" data-icon="dns">dns</span>
+<span class="text-label-mono-sm font-label-mono-sm mt-0.5">Matrix</span>
+</a>
+<!-- Tab 3: Builds -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-space-2 py-space-1 hover:text-primary-fixed transition-colors" href="#portafolio">
+<span class="material-symbols-outlined text-base" data-icon="dataset">dataset</span>
+<span class="text-label-mono-sm font-label-mono-sm mt-0.5">Builds</span>
+</a>
+<!-- Tab 4: Audit -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-space-2 py-space-1 hover:text-primary-fixed transition-colors" href="#contacto">
+<span class="material-symbols-outlined text-base" data-icon="bolt">bolt</span>
+<span class="text-label-mono-sm font-label-mono-sm mt-0.5">Audit</span>
+</a>
+</nav>
+
+<!-- ============ MODAL: CONTRASEÑA DE ADMINISTRADOR ============ -->
+<div id="admin-modal-overlay">
+  <div id="admin-modal-box">
+    <div class="flex items-center justify-between mb-space-3">
+      <span class="text-label-mono-sm font-bold text-primary-fixed">ACCESO ADMIN</span>
+      <span class="material-symbols-outlined text-secondary cursor-pointer" id="admin-modal-close">close</span>
+    </div>
+    <label class="block text-label-mono-sm text-secondary uppercase mb-1">Contraseña</label>
+    <input autocomplete="off" id="admin-password-input" type="password"/>
+    <div id="admin-modal-error"></div>
+    <button class="admin-btn admin-btn-save w-full justify-center" id="admin-password-submit" type="button">Entrar</button>
+  </div>
+</div>
+
+<!-- ============ MODAL GENÉRICO: EDITAR SECCIÓN ============ -->
+<div id="section-modal-overlay">
+  <div id="section-modal-box">
+    <div class="flex items-center justify-between mb-space-2">
+      <span class="text-headline-sm font-bold text-primary uppercase" id="section-modal-title">Editar Sección</span>
+      <span class="material-symbols-outlined text-secondary cursor-pointer" id="section-modal-close">close</span>
+    </div>
+    <div id="section-modal-fields"></div>
+    <button class="admin-btn admin-btn-save w-full justify-center mt-space-6" id="section-modal-save" type="button">Guardar cambios</button>
+  </div>
+</div>
+
+<!-- ============ PANEL: COTIZACIONES RECIBIDAS ============ -->
+<div id="quotes-panel-overlay">
+  <div id="quotes-panel-box">
+    <div class="flex items-center justify-between px-space-4 py-space-3 border-b border-surface-variant">
+      <span class="text-label-mono-sm font-bold text-primary-fixed">COTIZACIONES RECIBIDAS</span>
+      <span class="material-symbols-outlined text-secondary cursor-pointer" id="quotes-panel-close">close</span>
+    </div>
+    <div id="quotes-list">
+      <p class="text-secondary text-body-sm">Cargando...</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ BARRA FLOTANTE MODO ADMIN ============ -->
+<div id="admin-toolbar">
+  <button class="admin-btn admin-btn-save" id="btn-save-changes" type="button">
+    <span class="material-symbols-outlined text-sm">save</span> Guardar Servicios
+  </button>
+  <button class="admin-btn admin-btn-quotes" id="btn-view-quotes" type="button">
+    <span class="material-symbols-outlined text-sm">inbox</span> Ver Cotizaciones
+  </button>
+  <button class="admin-btn admin-btn-exit" id="btn-exit-admin" type="button">
+    <span class="material-symbols-outlined text-sm">logout</span> Salir
+  </button>
+</div>
+
+<script id="admin-backend-logic">
+(function () {
+  "use strict";
+
+  // ---------- Cliente Firebase ----------
+  let db = null;
+  let auth = null;
+  const configured = FIREBASE_CONFIG.apiKey && !FIREBASE_CONFIG.apiKey.startsWith("PEGA_AQUI");
+  if (configured) {
+    firebase.initializeApp(FIREBASE_CONFIG);
+    auth = firebase.auth();
+    db = firebase.firestore();
+    // La sesión de admin solo dura mientras la pestaña está abierta
+    auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+  } else {
+    console.warn("Firebase no está configurado todavía. Edita FIREBASE_CONFIG en el <head>.");
+  }
+
+  // ---------- EmailJS (para que las cotizaciones te lleguen al correo) ----------
+  const emailjsConfigured = EMAILJS_PUBLIC_KEY && !EMAILJS_PUBLIC_KEY.startsWith("PEGA_AQUI");
+  if (emailjsConfigured && window.emailjs) {
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  }
+
+  // Sube un archivo a Cloudinary (gratis, sin tarjeta) y devuelve su URL pública
+  async function subirImagen(file, carpeta) {
+    if (!CLOUDINARY_CLOUD_NAME || CLOUDINARY_CLOUD_NAME.startsWith("PEGA_AQUI")) {
+      throw new Error("Cloudinary no está configurado todavía (edita CLOUDINARY_CLOUD_NAME y CLOUDINARY_UPLOAD_PRESET en el <head>).");
+    }
+    const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    formData.append("folder", "tryhardweb/" + carpeta);
+    const res = await fetch(url, { method: "POST", body: formData });
+    const data = await res.json();
+    if (!res.ok || !data.secure_url) {
+      throw new Error(data.error ? data.error.message : "Error subiendo la imagen a Cloudinary");
+    }
+    return data.secure_url;
+  }
+
+  let isAdmin = false;
+
+  // ---------- Definición de secciones editables por ventana emergente ----------
+  const EDIT_SECTIONS = {
+    header: {
+      title: "Editar Menú y Encabezado",
+      fields: [
+        { key: "logo_nombre", label: "Nombre del logo", type: "text" },
+        { key: "logo_sub", label: "Subtítulo del logo", type: "text" },
+        { key: "logo_tagline", label: "Frase pequeña bajo el logo", type: "text" },
+        { key: "menu_inicio", label: "Menú: Inicio", type: "text" },
+        { key: "menu_servicios", label: "Menú: Servicios", type: "text" },
+        { key: "menu_portafolio", label: "Menú: Portafolio", type: "text" },
+        { key: "menu_contacto", label: "Menú: Contacto", type: "text" }
+      ]
+    },
+    hero: {
+      title: "Editar Inicio",
+      fields: [
+        { key: "hero_titulo_1", label: "Título principal (parte 1)", type: "text" },
+        { key: "hero_titulo_2", label: "Título principal (parte 2, resaltada)", type: "text" },
+        { key: "hero_subtitle", label: "Frase / subtítulo principal", type: "textarea" },
+        { key: "hero_caption", label: "Texto pequeño sobre la foto", type: "text" }
+      ]
+    },
+    stats: {
+      title: "Editar Estadísticas",
+      fields: [
+        { key: "stats_proyectos", label: "Proyectos completados", type: "text" },
+        { key: "stats_rapidos", label: "% Sitios rápidos", type: "text" },
+        { key: "stats_soporte", label: "Soporte", type: "text" },
+        { key: "quote_banner", label: "Frase institucional destacada", type: "textarea" }
+      ]
+    },
+    auditoria: {
+      title: "Editar Tarjeta de Auditoría",
+      fields: [
+        { key: "servicio_6_badge", label: "Etiqueta pequeña", type: "text" },
+        { key: "servicio_6_titulo", label: "Título", type: "text" },
+        { key: "servicio_6_desc", label: "Descripción", type: "textarea" },
+        { key: "servicio_6_boton", label: "Texto del botón", type: "text" }
+      ]
+    },
+    redes: {
+      title: "Editar Redes Sociales",
+      fields: [
+        { key: "redes_ig_url", label: "Instagram (link completo)", type: "text" },
+        { key: "redes_fb_url", label: "Facebook (link completo)", type: "text" },
+        { key: "redes_tk_url", label: "TikTok (link completo)", type: "text" },
+        { key: "redes_yt_url", label: "YouTube (link completo)", type: "text" },
+        { key: "redes_gh_url", label: "GitHub (link completo)", type: "text" },
+        { key: "redes_in_url", label: "LinkedIn (link completo)", type: "text" }
+      ]
+    },
+    contacto: {
+      title: "Editar Contacto",
+      fields: [
+        { key: "telefono_display", label: "Teléfono", type: "text" },
+        { key: "email_display", label: "Correo de contacto", type: "text" },
+        { key: "ubicacion", label: "Ubicación", type: "text" },
+        { key: "servicio_opciones", label: "Opciones del formulario (una por línea)", type: "textarea" },
+        { key: "cf_boton_enviar", label: "Texto del botón Enviar", type: "text" },
+        { key: "cf_boton_whatsapp", label: "Texto del botón WhatsApp", type: "text" }
+      ]
+    },
+    footer: {
+      title: "Editar Pie de Página",
+      fields: [
+        { key: "footer_copyright", label: "Texto de copyright", type: "text" },
+        { key: "footer_tagline", label: "Frase final", type: "text" }
+      ]
+    }
+  };
+  const SOCIAL_KEY_TO_ID = {
+    redes_ig_url: "social-ig",
+    redes_fb_url: "social-fb",
+    redes_tk_url: "social-tk",
+    redes_yt_url: "social-yt",
+    redes_gh_url: "social-gh",
+    redes_in_url: "social-in"
+  };
+
+  function openSectionModal(sectionKey) {
+    const section = EDIT_SECTIONS[sectionKey];
+    if (!section) return;
+    document.getElementById("section-modal-title").textContent = section.title;
+    const fieldsWrap = document.getElementById("section-modal-fields");
+    fieldsWrap.innerHTML = "";
+    section.fields.forEach((f) => {
+      const label = document.createElement("label");
+      label.textContent = f.label;
+      let currentVal = "";
+      if (SOCIAL_KEY_TO_ID[f.key]) {
+        const linkEl = document.getElementById(SOCIAL_KEY_TO_ID[f.key]);
+        currentVal = linkEl ? linkEl.getAttribute("href") : "";
+        if (currentVal === "#") currentVal = "";
+      } else {
+        const currentEl = document.querySelector(`[data-edit-key="${f.key}"]`);
+        currentVal = currentEl ? currentEl.textContent.trim() : "";
+      }
+      const input = document.createElement(f.type === "textarea" ? "textarea" : "input");
+      if (f.type !== "textarea") input.type = "text";
+      input.value = currentVal;
+      input.setAttribute("data-field-key", f.key);
+      fieldsWrap.appendChild(label);
+      fieldsWrap.appendChild(input);
+    });
+    document.getElementById("section-modal-overlay").classList.add("open");
+    document.getElementById("section-modal-overlay").setAttribute("data-current-section", sectionKey);
+  }
+  function closeSectionModal() {
+    document.getElementById("section-modal-overlay").classList.remove("open");
+  }
+  document.getElementById("section-modal-close").addEventListener("click", closeSectionModal);
+  document.getElementById("section-modal-overlay").addEventListener("click", (e) => {
+    if (e.target.id === "section-modal-overlay") closeSectionModal();
+  });
+  document.querySelectorAll(".section-edit-btn").forEach((btn) => {
+    btn.addEventListener("click", () => openSectionModal(btn.getAttribute("data-section")));
+  });
+
+  document.getElementById("section-modal-save").addEventListener("click", async () => {
+    if (!db || !isAdmin) return;
+    const payload = {};
+    document.querySelectorAll("#section-modal-fields [data-field-key]").forEach((input) => {
+      const key = input.getAttribute("data-field-key");
+      const val = input.value.trim();
+      payload[key] = val;
+      if (SOCIAL_KEY_TO_ID[key]) {
+        const linkEl = document.getElementById(SOCIAL_KEY_TO_ID[key]);
+        if (linkEl) linkEl.setAttribute("href", val || "#");
+      } else {
+        const displayEl = document.querySelector(`[data-edit-key="${key}"]`);
+        if (displayEl) displayEl.textContent = val;
+      }
+    });
+    try {
+      await db.collection("config").doc("site").set(payload, { merge: true });
+      syncDerivedLinks();
+      if (payload.servicio_opciones) rebuildServiceDropdown(payload.servicio_opciones);
+      closeSectionModal();
+      alert("Cambios guardados correctamente ✅");
+    } catch (err) {
+      alert("No se pudo guardar: " + err.message);
+    }
+  });
+
+  // ---------- 0) Servicios dinámicos (tarjetas que se pueden agregar/quitar) ----------
+  const DEFAULT_SERVICIOS = [
+    { icon: "devices", titulo: "Sitios Web Profesionales", desc: "Diseños modernos, ultra responsivos y optimizados para convertir visitantes en clientes de alto valor de manera continua.", tag: "RESPONSIVE // SEO-READY" },
+    { icon: "shopping_cart", titulo: "Tiendas Online", desc: "Vende tus productos con pasarelas de pago seguras (ATH Móvil, Stripe, PayPal) y páneles intuitivos de inventario.", tag: "E-COMMERCE // CHECKOUT" },
+    { icon: "calendar_month", titulo: "Sistemas de Citas", desc: "Reservas interactivas, calendarios sincronizados en tiempo real y notificaciones automáticas vía WhatsApp y correo.", tag: "BOOKING // SYNC" },
+    { icon: "settings", titulo: "Mantenimiento y Soporte", desc: "Tu página siempre activa, segura y respaldada. Parches de seguridad, backups semanales y resolución técnica prioritaria.", tag: "SLA // 100% ONLINE" },
+    { icon: "analytics", titulo: "SEO & Marketing", desc: "Posiciona tu negocio en Google Maps y motores de búsqueda. Atrae tráfico local calificado que se convierte en ventas.", tag: "SERP // GOOGLE RANK" }
+  ];
+  let serviciosActuales = JSON.parse(JSON.stringify(DEFAULT_SERVICIOS));
+
+  function renderServicios() {
+    const grid = document.getElementById("servicios-grid");
+    if (!grid) return;
+    grid.innerHTML = "";
+    serviciosActuales.forEach((s, idx) => {
+      const card = document.createElement("div");
+      card.className = "bg-surface-container-low border border-surface-variant p-space-6 flex flex-col justify-between hover:border-primary-fixed transition-all duration-75 relative";
+      card.innerHTML = `
+        <button type="button" class="servicio-del-btn hidden absolute top-2 right-2 w-7 h-7 items-center justify-center bg-error text-on-error text-xs font-bold" data-idx="${idx}" title="Quitar este servicio">✕</button>
+        <div>
+          <div class="w-10 h-10 bg-surface-container flex items-center justify-center border border-surface-variant text-primary-fixed mb-space-4">
+            <span class="material-symbols-outlined" data-icon="${s.icon}">${s.icon}</span>
+          </div>
+          <h3 class="text-headline-sm font-headline-sm text-primary uppercase mb-space-2 servicio-field" data-field="titulo" data-idx="${idx}">${s.titulo}</h3>
+          <p class="text-body-md font-body-md text-secondary servicio-field" data-field="desc" data-idx="${idx}">${s.desc}</p>
+        </div>
+        <div class="mt-space-4 pt-space-3 border-t border-surface-variant flex items-center justify-between text-label-mono-sm font-label-mono-sm text-secondary">
+          <span class="servicio-field" data-field="tag" data-idx="${idx}">${s.tag}</span>
+          <span class="text-primary-fixed">${String(idx + 1).padStart(2, "0")}</span>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+    // Botones de borrar
+    grid.querySelectorAll(".servicio-del-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const i = parseInt(btn.getAttribute("data-idx"), 10);
+        serviciosActuales.splice(i, 1);
+        renderServicios();
+        if (document.body.classList.contains("admin-edit-active")) applyServiciosEditMode();
+      });
+    });
+  }
+
+  function applyServiciosEditMode() {
+    document.querySelectorAll(".servicio-field").forEach((el) => {
+      el.setAttribute("contenteditable", "true");
+      el.setAttribute("spellcheck", "false");
+    });
+    document.querySelectorAll(".servicio-del-btn").forEach((btn) => {
+      btn.classList.remove("hidden");
+      btn.classList.add("flex");
+    });
+    const addWrap = document.getElementById("btn-add-servicio-wrap");
+    if (addWrap) addWrap.classList.remove("hidden");
+  }
+
+  function collectServiciosFromDOM() {
+    const cards = document.querySelectorAll("#servicios-grid > div");
+    const result = [];
+    cards.forEach((card) => {
+      const titulo = card.querySelector('[data-field="titulo"]');
+      const desc = card.querySelector('[data-field="desc"]');
+      const tag = card.querySelector('[data-field="tag"]');
+      const iconEl = card.querySelector("[data-icon]");
+      result.push({
+        icon: iconEl ? iconEl.getAttribute("data-icon") : "star",
+        titulo: titulo ? titulo.textContent.trim() : "",
+        desc: desc ? desc.textContent.trim() : "",
+        tag: tag ? tag.textContent.trim() : ""
+      });
+    });
+    return result;
+  }
+
+  document.getElementById("btn-add-servicio").addEventListener("click", () => {
+    serviciosActuales.push({ icon: "star", titulo: "Nuevo servicio", desc: "Describe aquí este servicio.", tag: "NUEVO // TAG" });
+    renderServicios();
+    applyServiciosEditMode();
+  });
+
+  // Reconstruye el <select> del formulario a partir del texto editable de opciones
+  function rebuildServiceDropdown(text) {
+    const select = document.getElementById("cf-servicio");
+    if (!select || !text) return;
+    const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
+    if (lines.length === 0) return;
+    select.innerHTML = "";
+    lines.forEach((line) => {
+      const opt = document.createElement("option");
+      opt.textContent = line;
+      select.appendChild(opt);
+    });
+  }
+
+  // ---------- Portafolio dinámico (foto + link + agregar/quitar) ----------
+  const PLACEHOLDER_IMG = "https://placehold.co/600x400/1c1b1b/fee400?text=Sube+una+foto";
+  const DEFAULT_PORTAFOLIO = [
+    { imagen: "https://lh3.googleusercontent.com/aida-public/AB6AXuCbD4_-ES5WPb4QXMHBvAJG8BWPXjuz_DIRcXbcMoMognFkfIriA6ZHghl56NwUtSxAY7DPu9kWop4VjQEM6RL8l6x6Z0G5VO7N1luHiA0I40PmQ7FS7tu2S5UNgdifpTpVNUaucqNe2KsQTottXsjKqyHcWFN9AIMJxVAk6qg9qSM5RyaNgyNRoDqRTbPDiONwfZkJ47dz_qeO0syucESiL2B2zqOSfalMycDrywkPn4IJV_D8P2s", tag: "HOSPEDAJE", titulo: "Happy Chalets", desc: "Plataforma de Reservas & Motor de Pagos", link: "" },
+    { imagen: "https://lh3.googleusercontent.com/aida-public/AB6AXuA9Z4OEJMwDR3Q803CnEThJQXSJpFAuyQx4oGSNm7UTfVnbDIqVZYCluR1BusHZgftZXsrO5ONdo3IIOnNGcOmrmYw5YSxI4l1_Skb2sqKtLOdSHE2nUCsRHMPBo8c1u19bSQ7DGZ_k8IkS6LCGOPScZaZO8oG44IM6m-lfyJDEntbavclIgGdBF_SujLSTBg_eQ7mTKLbpBuPnQbleXRcbX60STOr_zHcisGtvSosKplmTK8jAbTQ", tag: "SERVICIOS", titulo: "Pawducation PR", desc: "Entrenamiento de Perros & Citas Online", link: "" },
+    { imagen: "https://lh3.googleusercontent.com/aida-public/AB6AXuAXt6gk3yTiMruS_mOeJm09d0WXh3wcpNCGR-5UnFpnCwXHyTqFalfI2e0lkc_RFrSO2qKiwOYnx91ZtB0l6j72L0lbRazTWnfcuzzYPzO0Cr-v2S2NTjEArlO4FZhoSDJrVs4RbJKWsqMXtw6a18wKjC24Eri_6oCiKn9pxdLupxcjfsmU28NHuMz--CLV2NvXcAOUr6MlQSKphRDwUxNDYPhaYh2X3ASFDk-d9QNJIL9z7Dgu6Es", tag: "EVENTOS", titulo: "EPW Wrestling", desc: "Eventos & Venta Digital de Boletos", link: "" },
+    { imagen: "https://lh3.googleusercontent.com/aida-public/AB6AXuA2ANVdxg8yW-Rq4GiUYLUzqjopi-1d9_a53pp44VI3WPwVtp4iznn1FRBGHuDK8MqJhaPxV2D27lfjVfbx0Ri-5y2C1Jm3AYcMbe3e3jtIHX94PMMRkK0in9DVj8yMrmzqO0TXIq3zQdp4eMDYKKAHnusTgcsLbmlUlOMzad7KBAI6Kep4AejS-LBulbWMqNgwZlV_JflXq5vx0l43-rzKeqqIWJEiYDC_UvLkhUrqlPmJZ_WT75E", tag: "E-COMMERCE", titulo: "Manos Creativas PR", desc: "Tienda Online & Gestión de Envíos", link: "" }
+  ];
+  let portafolioActual = JSON.parse(JSON.stringify(DEFAULT_PORTAFOLIO));
+
+  function renderPortafolio() {
+    const grid = document.getElementById("portafolio-grid");
+    if (!grid) return;
+    grid.innerHTML = "";
+    portafolioActual.forEach((p, idx) => {
+      const card = document.createElement("div");
+      card.className = "bg-surface-container-low border border-surface-variant group hover:border-primary-fixed transition-colors relative";
+      const imgSrc = p.imagen || PLACEHOLDER_IMG;
+      const linkHref = p.link && p.link.trim() ? p.link.trim() : "#";
+      card.innerHTML = `
+        <button type="button" class="proyecto-del-btn hidden absolute top-2 left-2 z-10 w-7 h-7 items-center justify-center bg-error text-on-error text-xs font-bold" data-idx="${idx}" title="Quitar este proyecto">✕</button>
+        <div class="relative w-full aspect-video bg-surface-container overflow-hidden border-b border-surface-variant">
+          <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 proyecto-img" src="${imgSrc}"/>
+          <span class="absolute top-2 right-2 bg-surface-container-lowest/90 text-primary-fixed text-label-mono-sm font-label-mono-sm px-2 py-0.5 border border-surface-variant proyecto-field" data-field="tag" data-idx="${idx}">${p.tag}</span>
+          <div class="proyecto-img-controls hidden absolute inset-0 flex-col items-center justify-center gap-1 bg-black/60">
+            <button type="button" class="proyecto-upload-btn bg-primary-fixed text-on-primary-fixed text-label-mono-sm font-bold px-2 py-1" data-idx="${idx}">Subir foto</button>
+          </div>
+        </div>
+        <div class="p-space-4">
+          <div class="flex items-center justify-between">
+            <h4 class="text-headline-sm font-headline-sm text-primary font-bold proyecto-field" data-field="titulo" data-idx="${idx}">${p.titulo}</h4>
+            <a class="proyecto-link-icon" href="${linkHref}" target="_blank" rel="noopener noreferrer">
+              <span class="material-symbols-outlined text-secondary group-hover:text-primary-fixed text-base" data-icon="open_in_new">open_in_new</span>
+            </a>
+          </div>
+          <p class="text-body-sm font-body-sm text-secondary mt-1 proyecto-field" data-field="desc" data-idx="${idx}">${p.desc}</p>
+          <div class="proyecto-link-edit hidden mt-2">
+            <label class="block text-label-mono-sm text-secondary uppercase mb-1">Link del proyecto</label>
+            <input type="text" class="w-full bg-surface-container border border-surface-variant px-2 py-1 text-primary text-body-sm proyecto-link-input" data-idx="${idx}" value="${p.link || ""}" placeholder="https://..."/>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+    grid.querySelectorAll(".proyecto-del-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const i = parseInt(btn.getAttribute("data-idx"), 10);
+        portafolioActual.splice(i, 1);
+        renderPortafolio();
+        if (document.body.classList.contains("admin-edit-active")) applyPortafolioEditMode();
+      });
+    });
+    grid.querySelectorAll(".proyecto-upload-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const i = parseInt(btn.getAttribute("data-idx"), 10);
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "image/*";
+        input.onchange = async () => {
+          if (!input.files[0]) return;
+          try {
+            const url = await subirImagen(input.files[0], "proyecto-" + i);
+            portafolioActual[i].imagen = url;
+            renderPortafolio();
+            applyPortafolioEditMode();
+          } catch (err) {
+            alert("No se pudo subir la foto: " + err.message);
+          }
+        };
+        input.click();
+      });
+    });
+  }
+
+  function applyPortafolioEditMode() {
+    document.querySelectorAll(".proyecto-field").forEach((el) => {
+      el.setAttribute("contenteditable", "true");
+      el.setAttribute("spellcheck", "false");
+    });
+    document.querySelectorAll(".proyecto-del-btn").forEach((btn) => {
+      btn.classList.remove("hidden");
+      btn.classList.add("flex");
+    });
+    document.querySelectorAll(".proyecto-img-controls").forEach((el) => {
+      el.classList.remove("hidden");
+      el.classList.add("flex");
+    });
+    document.querySelectorAll(".proyecto-link-edit").forEach((el) => el.classList.remove("hidden"));
+    const addWrap = document.getElementById("btn-add-proyecto-wrap");
+    if (addWrap) addWrap.classList.remove("hidden");
+  }
+  function disablePortafolioEditMode() {
+    document.querySelectorAll(".proyecto-field").forEach((el) => el.removeAttribute("contenteditable"));
+    document.querySelectorAll(".proyecto-del-btn").forEach((btn) => {
+      btn.classList.add("hidden");
+      btn.classList.remove("flex");
+    });
+    document.querySelectorAll(".proyecto-img-controls").forEach((el) => {
+      el.classList.add("hidden");
+      el.classList.remove("flex");
+    });
+    document.querySelectorAll(".proyecto-link-edit").forEach((el) => el.classList.add("hidden"));
+    const addWrap = document.getElementById("btn-add-proyecto-wrap");
+    if (addWrap) addWrap.classList.add("hidden");
+  }
+
+  function collectPortafolioFromDOM() {
+    const cards = document.querySelectorAll("#portafolio-grid > div");
+    const result = [];
+    cards.forEach((card) => {
+      const titulo = card.querySelector('[data-field="titulo"]');
+      const desc = card.querySelector('[data-field="desc"]');
+      const tag = card.querySelector('[data-field="tag"]');
+      const img = card.querySelector(".proyecto-img");
+      const linkInput = card.querySelector(".proyecto-link-input");
+      result.push({
+        imagen: img ? img.getAttribute("src") : "",
+        titulo: titulo ? titulo.textContent.trim() : "",
+        desc: desc ? desc.textContent.trim() : "",
+        tag: tag ? tag.textContent.trim() : "",
+        link: linkInput ? linkInput.value.trim() : ""
+      });
+    });
+    return result;
+  }
+
+  document.getElementById("btn-add-proyecto").addEventListener("click", () => {
+    portafolioActual.push({ imagen: "", titulo: "Nuevo Proyecto", desc: "Describe este proyecto.", tag: "NUEVO", link: "" });
+    renderPortafolio();
+    applyPortafolioEditMode();
+  });
+
+  document.getElementById("btn-save-portafolio").addEventListener("click", async () => {
+    if (!db || !isAdmin) return;
+    portafolioActual = collectPortafolioFromDOM();
+    try {
+      await db.collection("config").doc("site").set({ portafolio_json: JSON.stringify(portafolioActual) }, { merge: true });
+      renderPortafolio();
+      applyPortafolioEditMode();
+      alert("Portafolio guardado correctamente ✅");
+    } catch (err) {
+      alert("No se pudo guardar: " + err.message);
+    }
+  });
+
+  // ---------- Subir/quitar la foto del panel del Inicio ----------
+  document.querySelectorAll(".image-upload-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const targetId = btn.getAttribute("data-target");
+      const imgKey = btn.getAttribute("data-img-key");
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+      input.onchange = async () => {
+        if (!input.files[0]) return;
+        try {
+          const url = await subirImagen(input.files[0], imgKey);
+          const imgEl = document.getElementById(targetId);
+          if (imgEl) imgEl.src = url;
+          if (db && isAdmin) {
+            await db.collection("config").doc("site").set({ [imgKey + "_url"]: url }, { merge: true });
+          }
+        } catch (err) {
+          alert("No se pudo subir la foto: " + err.message);
+        }
+      };
+      input.click();
+    });
+  });
+  document.querySelectorAll(".image-remove-btn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const targetId = btn.getAttribute("data-target");
+      const imgKey = btn.getAttribute("data-img-key");
+      const imgEl = document.getElementById(targetId);
+      if (imgEl) imgEl.src = PLACEHOLDER_IMG;
+      if (db && isAdmin) {
+        try {
+          await db.collection("config").doc("site").set({ [imgKey + "_url"]: "" }, { merge: true });
+        } catch (err) {
+          alert("No se pudo quitar la foto: " + err.message);
+        }
+      }
+    });
+  });
+
+  // ---------- 1) Cargar configuración pública del sitio ----------
+  const LOCAL_CACHE_KEY = "tryhardweb_config_cache_v1";
+
+  async function loadConfig() {
+    // 1) Aplica de inmediato lo último guardado en este navegador (sin esperar a Firebase)
+    try {
+      const cached = localStorage.getItem(LOCAL_CACHE_KEY);
+      if (cached) applyConfig(JSON.parse(cached));
+      else { renderServicios(); renderPortafolio(); }
+    } catch (e) {
+      renderServicios();
+      renderPortafolio();
+    }
+    if (!db) return;
+    // 2) Confirma/actualiza en segundo plano con los datos reales de Firebase
+    try {
+      const doc = await db.collection("config").doc("site").get();
+      if (doc.exists) {
+        const data = doc.data() || {};
+        applyConfig(data);
+        try {
+          localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify(data));
+        } catch (e) { /* almacenamiento lleno o bloqueado, no es grave */ }
+      }
+    } catch (e) {
+      console.error("Error cargando config:", e.message);
+    }
+  }
+
+  function applyConfig(map) {
+    document.querySelectorAll("[data-edit-key]").forEach((el) => {
+      const key = el.getAttribute("data-edit-key");
+      if (map[key] !== undefined) {
+        el.textContent = map[key];
+      }
+    });
+    if (map.servicios_json) {
+      try {
+        serviciosActuales = JSON.parse(map.servicios_json);
+        renderServicios();
+      } catch (e) {
+        console.error("servicios_json inválido:", e);
+      }
+    }
+    if (map.portafolio_json) {
+      try {
+        portafolioActual = JSON.parse(map.portafolio_json);
+        renderPortafolio();
+      } catch (e) {
+        console.error("portafolio_json inválido:", e);
+      }
+    }
+    if (map.hero_photo_url !== undefined) {
+      const heroImg = document.getElementById("hero-photo-img");
+      if (heroImg) heroImg.src = map.hero_photo_url || PLACEHOLDER_IMG;
+    }
+    if (map.servicio_opciones) {
+      rebuildServiceDropdown(map.servicio_opciones);
+    }
+    Object.keys(SOCIAL_KEY_TO_ID).forEach((key) => {
+      if (map[key]) {
+        const linkEl = document.getElementById(SOCIAL_KEY_TO_ID[key]);
+        if (linkEl) linkEl.setAttribute("href", map[key]);
+      }
+    });
+    syncDerivedLinks();
+  }
+
+  // A partir del texto de teléfono editable, actualiza los enlaces tel:/wa.me/mailto
+  function syncDerivedLinks() {
+    const telSpan = document.querySelector('[data-edit-key="telefono_display"]');
+    if (telSpan) {
+      const digits = telSpan.textContent.replace(/\D/g, "");
+      if (digits) {
+        document.querySelectorAll(".wa-link").forEach((a) => (a.href = "https://wa.me/" + digits));
+        document.querySelectorAll(".tel-link").forEach((a) => (a.href = "tel:+" + digits));
+      }
+    }
+    const mailSpan = document.querySelector('[data-edit-key="email_display"]');
+    if (mailSpan) {
+      const email = mailSpan.textContent.trim();
+      if (email) {
+        document.querySelectorAll(".mail-link").forEach((a) => (a.href = "mailto:" + email));
+      }
+    }
+  }
+
+  // ---------- 2) Sesión ya activa (misma pestaña) ----------
+  if (auth) {
+    auth.onAuthStateChanged((user) => {
+      if (user && user.email === ADMIN_EMAIL) {
+        isAdmin = true;
+        enableEditMode();
+      } else {
+        isAdmin = false;
+        disableEditModeUI();
+      }
+    });
+  }
+
+  // ---------- 3) Detección de 5 clics en el logo ----------
+  let clickCount = 0;
+  let clickTimer = null;
+  const trigger = document.getElementById("admin-trigger");
+  if (trigger) {
+    trigger.addEventListener("click", () => {
+      if (isAdmin) return; // ya está adentro
+      clickCount++;
+      clearTimeout(clickTimer);
+      clickTimer = setTimeout(() => (clickCount = 0), 2500);
+      if (clickCount >= 5) {
+        clickCount = 0;
+        openAdminModal();
+      }
+    });
+  }
+
+  function openAdminModal() {
+    document.getElementById("admin-modal-overlay").classList.add("open");
+    document.getElementById("admin-password-input").value = "";
+    document.getElementById("admin-modal-error").textContent = "";
+    document.getElementById("admin-password-input").focus();
+  }
+  function closeAdminModal() {
+    document.getElementById("admin-modal-overlay").classList.remove("open");
+  }
+  document.getElementById("admin-modal-close").addEventListener("click", closeAdminModal);
+  document.getElementById("admin-modal-overlay").addEventListener("click", (e) => {
+    if (e.target.id === "admin-modal-overlay") closeAdminModal();
+  });
+
+  async function submitAdminPassword() {
+    const val = document.getElementById("admin-password-input").value;
+    if (!val || !auth) return;
+    try {
+      await auth.signInWithEmailAndPassword(ADMIN_EMAIL, val);
+      closeAdminModal(); // enableEditMode() se dispara solo via onAuthStateChanged
+    } catch (err) {
+      const box = document.getElementById("admin-modal-box");
+      document.getElementById("admin-modal-error").textContent = "Contraseña incorrecta.";
+      box.classList.remove("shake");
+      void box.offsetWidth;
+      box.classList.add("shake");
+    }
+  }
+  document.getElementById("admin-password-submit").addEventListener("click", submitAdminPassword);
+  document.getElementById("admin-password-input").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") submitAdminPassword();
+  });
+
+  // ---------- 4) Modo edición (sin dashboard, todo inline) ----------
+  function enableEditMode() {
+    document.body.classList.add("admin-edit-active");
+    applyServiciosEditMode();
+    applyPortafolioEditMode();
+    document.querySelectorAll(".image-edit-controls").forEach((el) => {
+      el.classList.remove("hidden");
+      el.classList.add("flex");
+    });
+  }
+  function disableEditModeUI() {
+    document.body.classList.remove("admin-edit-active");
+    document.querySelectorAll(".servicio-field").forEach((el) => el.removeAttribute("contenteditable"));
+    document.querySelectorAll(".servicio-del-btn").forEach((btn) => {
+      btn.classList.add("hidden");
+      btn.classList.remove("flex");
+    });
+    const addWrap = document.getElementById("btn-add-servicio-wrap");
+    if (addWrap) addWrap.classList.add("hidden");
+    disablePortafolioEditMode();
+    document.querySelectorAll(".image-edit-controls").forEach((el) => {
+      el.classList.add("hidden");
+      el.classList.remove("flex");
+    });
+  }
+  document.getElementById("btn-exit-admin").addEventListener("click", async () => {
+    if (auth) await auth.signOut();
+    disableEditModeUI();
+  });
+
+  document.getElementById("btn-save-changes").addEventListener("click", async () => {
+    if (!db || !isAdmin) return;
+    const payload = {};
+    // Servicios dinámicos (agregar/quitar tarjetas)
+    serviciosActuales = collectServiciosFromDOM();
+    payload.servicios_json = JSON.stringify(serviciosActuales);
+    try {
+      await db.collection("config").doc("site").set(payload, { merge: true });
+      renderServicios();
+      applyServiciosEditMode();
+      alert("Servicios guardados correctamente ✅");
+    } catch (err) {
+      alert("No se pudo guardar: " + err.message);
+    }
+  });
+
+  // ---------- 5) Panel de cotizaciones (inline, sin salir de la página) ----------
+  document.getElementById("btn-view-quotes").addEventListener("click", async () => {
+    document.getElementById("quotes-panel-overlay").classList.add("open");
+    await loadQuotes();
+  });
+  document.getElementById("quotes-panel-close").addEventListener("click", () => {
+    document.getElementById("quotes-panel-overlay").classList.remove("open");
+  });
+  document.getElementById("quotes-panel-overlay").addEventListener("click", (e) => {
+    if (e.target.id === "quotes-panel-overlay") {
+      document.getElementById("quotes-panel-overlay").classList.remove("open");
+    }
+  });
+
+  async function loadQuotes() {
+    const list = document.getElementById("quotes-list");
+    list.innerHTML = '<p class="text-secondary text-body-sm">Cargando...</p>';
+    if (!db || !isAdmin) return;
+    try {
+      const snap = await db.collection("cotizaciones").orderBy("createdAt", "desc").get();
+      if (snap.empty) {
+        list.innerHTML = '<p class="text-secondary text-body-sm">Aún no hay cotizaciones.</p>';
+        return;
+      }
+      list.innerHTML = "";
+      snap.forEach((docSnap) => {
+        const q = docSnap.data();
+        const card = document.createElement("div");
+        card.className = "quote-card";
+        const fecha = q.createdAt && q.createdAt.toDate ? q.createdAt.toDate().toLocaleString("es-PR") : "";
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="qname">${escapeHtml(q.nombre)}</span>
+            <span>${fecha}</span>
+          </div>
+          <div>Contacto: ${escapeHtml(q.contacto)}</div>
+          <div>Servicio: ${escapeHtml(q.servicio || "-")}</div>
+          <div class="mt-1">${escapeHtml(q.mensaje || "")}</div>
+          <select data-id="${docSnap.id}">
+            <option value="nueva" ${q.estado === "nueva" ? "selected" : ""}>Nueva</option>
+            <option value="vista" ${q.estado === "vista" ? "selected" : ""}>Vista</option>
+            <option value="atendida" ${q.estado === "atendida" ? "selected" : ""}>Atendida</option>
+          </select>
+        `;
+        card.querySelector("select").addEventListener("change", async (e) => {
+          try {
+            await db.collection("cotizaciones").doc(e.target.getAttribute("data-id")).update({
+              estado: e.target.value,
+            });
+          } catch (err) {
+            alert("No se pudo actualizar: " + err.message);
+          }
+        });
+        list.appendChild(card);
+      });
+    } catch (err) {
+      list.innerHTML = '<p class="text-error text-body-sm">Error: ' + err.message + "</p>";
+    }
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str == null ? "" : String(str);
+    return div.innerHTML;
+  }
+
+  // ---------- 6) Formulario público de cotización ----------
+  const form = document.getElementById("cotizacion-form");
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const statusEl = document.getElementById("cf-status");
+      const submitBtn = document.getElementById("cf-submit");
+      if (!db) {
+        statusEl.textContent = "El backend aún no está configurado.";
+        statusEl.classList.remove("hidden");
+        return;
+      }
+      const payload = {
+        nombre: document.getElementById("cf-nombre").value.trim(),
+        contacto: document.getElementById("cf-contacto").value.trim(),
+        servicio: document.getElementById("cf-servicio").value,
+        mensaje: document.getElementById("cf-mensaje").value.trim(),
+        estado: "nueva",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      };
+      submitBtn.disabled = true;
+      try {
+        await db.collection("cotizaciones").add(payload);
+        // Envía el aviso por correo (si EmailJS está configurado). Si falla, no interrumpe el flujo.
+        if (emailjsConfigured && window.emailjs) {
+          emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+            from_name: payload.nombre,
+            contacto: payload.contacto,
+            servicio: payload.servicio,
+            mensaje: payload.mensaje
+          }).catch((err) => console.error("EmailJS error:", err));
+        }
+        statusEl.textContent = "¡Mensaje enviado! Te contactaremos pronto.";
+        statusEl.style.color = "#fee400";
+        statusEl.classList.remove("hidden");
+        form.reset();
+      } catch (err) {
+        statusEl.textContent = "Hubo un error, intenta de nuevo.";
+        statusEl.style.color = "#ffb4ab";
+        statusEl.classList.remove("hidden");
+        console.error(err);
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  }
+
+  // ---------- Init ----------
+  loadConfig();
+})();
+</script>
+</body></html>
