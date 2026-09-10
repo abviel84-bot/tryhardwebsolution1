@@ -537,8 +537,12 @@
 <span class="material-symbols-outlined text-sm">edit</span>
 <span>Editar Estadísticas</span>
 </button>
+<button class="section-edit-btn hidden items-center gap-space-2 bg-transparent border border-dashed border-primary-fixed text-primary-fixed px-space-4 py-2 text-label-mono-sm font-label-mono-sm uppercase mb-space-4 ml-space-2" id="btn-toggle-quote-banner" type="button">
+<span class="material-symbols-outlined text-sm" id="btn-toggle-quote-banner-icon">visibility_off</span>
+<span id="btn-toggle-quote-banner-label">Ocultar Frase Destacada</span>
+</button>
 <!-- Institutional Quote Banner -->
-<div class="bg-primary-fixed text-on-primary-fixed p-space-6 flex flex-col md:flex-row items-center justify-between gap-space-4">
+<div class="bg-primary-fixed text-on-primary-fixed p-space-6 flex flex-col md:flex-row items-center justify-between gap-space-4" id="quote-banner-section">
 <div>
 <p class="text-headline-md font-headline-md uppercase font-bold tracking-tight" data-edit-key="quote_banner">
             “BUENAS PÁGINAS, MEJORES OPORTUNIDADES.”
@@ -953,6 +957,28 @@ Auditoría y Optimización</div>
   });
   document.querySelectorAll(".section-edit-btn").forEach((btn) => {
     btn.addEventListener("click", () => openSectionModal(btn.getAttribute("data-section")));
+  });
+
+  // ---------- Mostrar/ocultar la Frase Destacada (quote banner) ----------
+  function setQuoteBannerVisible(visible) {
+    const banner = document.getElementById("quote-banner-section");
+    const icon = document.getElementById("btn-toggle-quote-banner-icon");
+    const label = document.getElementById("btn-toggle-quote-banner-label");
+    if (banner) banner.style.display = visible ? "" : "none";
+    if (icon) icon.textContent = visible ? "visibility_off" : "visibility";
+    if (label) label.textContent = visible ? "Ocultar Frase Destacada" : "Mostrar Frase Destacada";
+  }
+  let quoteBannerVisible = true;
+  document.getElementById("btn-toggle-quote-banner").addEventListener("click", async () => {
+    quoteBannerVisible = !quoteBannerVisible;
+    setQuoteBannerVisible(quoteBannerVisible);
+    if (db && isAdmin) {
+      try {
+        await db.collection("config").doc("site").set({ quote_banner_visible: quoteBannerVisible }, { merge: true });
+      } catch (err) {
+        alert("No se pudo guardar: " + err.message);
+      }
+    }
   });
 
   document.getElementById("section-modal-save").addEventListener("click", async () => {
@@ -1415,6 +1441,10 @@ Auditoría y Optimización</div>
     if (map.hero_photo_url !== undefined) {
       const heroImg = document.getElementById("hero-photo-img");
       if (heroImg) heroImg.src = map.hero_photo_url || PLACEHOLDER_IMG;
+    }
+    if (map.quote_banner_visible !== undefined) {
+      quoteBannerVisible = map.quote_banner_visible;
+      setQuoteBannerVisible(quoteBannerVisible);
     }
     if (map.servicio_opciones) {
       rebuildServiceDropdown(map.servicio_opciones);
