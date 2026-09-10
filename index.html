@@ -505,7 +505,7 @@
 <!-- Stats & Trust Banner -->
 <section class="border-y border-surface-variant bg-surface-container-low">
 <div class="max-w-7xl mx-auto px-space-4 md:px-margin-desktop py-space-8">
-<div class="grid grid-cols-2 md:grid-cols-5 gap-space-4 border-b border-surface-variant pb-space-8 mb-space-8">
+<div class="grid grid-cols-2 md:grid-cols-5 gap-space-4 border-b border-surface-variant pb-space-8 mb-space-8" id="stats-grid-section">
 <div class="flex flex-col">
 <span class="text-headline-lg font-headline-lg text-primary-fixed font-bold" data-edit-key="stats_proyectos">50+</span>
 <span class="text-label-mono-sm font-label-mono-sm text-secondary uppercase">Proyectos Completados</span>
@@ -540,6 +540,10 @@
 <button class="section-edit-btn hidden items-center gap-space-2 bg-transparent border border-dashed border-primary-fixed text-primary-fixed px-space-4 py-2 text-label-mono-sm font-label-mono-sm uppercase mb-space-4 ml-space-2" id="btn-toggle-quote-banner" type="button">
 <span class="material-symbols-outlined text-sm" id="btn-toggle-quote-banner-icon">visibility_off</span>
 <span id="btn-toggle-quote-banner-label">Ocultar Frase Destacada</span>
+</button>
+<button class="section-edit-btn hidden items-center gap-space-2 bg-transparent border border-dashed border-primary-fixed text-primary-fixed px-space-4 py-2 text-label-mono-sm font-label-mono-sm uppercase mb-space-4 ml-space-2" id="btn-toggle-stats" type="button">
+<span class="material-symbols-outlined text-sm" id="btn-toggle-stats-icon">visibility_off</span>
+<span id="btn-toggle-stats-label">Ocultar Estadísticas</span>
 </button>
 <!-- Institutional Quote Banner -->
 <div class="bg-primary-fixed text-on-primary-fixed p-space-6 flex flex-col md:flex-row items-center justify-between gap-space-4" id="quote-banner-section">
@@ -975,6 +979,28 @@ Auditoría y Optimización</div>
     if (db && isAdmin) {
       try {
         await db.collection("config").doc("site").set({ quote_banner_visible: quoteBannerVisible }, { merge: true });
+      } catch (err) {
+        alert("No se pudo guardar: " + err.message);
+      }
+    }
+  });
+
+  // ---------- Mostrar/ocultar la sección de Estadísticas ----------
+  function setStatsVisible(visible) {
+    const grid = document.getElementById("stats-grid-section");
+    const icon = document.getElementById("btn-toggle-stats-icon");
+    const label = document.getElementById("btn-toggle-stats-label");
+    if (grid) grid.style.display = visible ? "" : "none";
+    if (icon) icon.textContent = visible ? "visibility_off" : "visibility";
+    if (label) label.textContent = visible ? "Ocultar Estadísticas" : "Mostrar Estadísticas";
+  }
+  let statsVisible = true;
+  document.getElementById("btn-toggle-stats").addEventListener("click", async () => {
+    statsVisible = !statsVisible;
+    setStatsVisible(statsVisible);
+    if (db && isAdmin) {
+      try {
+        await db.collection("config").doc("site").set({ stats_visible: statsVisible }, { merge: true });
       } catch (err) {
         alert("No se pudo guardar: " + err.message);
       }
@@ -1445,6 +1471,10 @@ Auditoría y Optimización</div>
     if (map.quote_banner_visible !== undefined) {
       quoteBannerVisible = map.quote_banner_visible;
       setQuoteBannerVisible(quoteBannerVisible);
+    }
+    if (map.stats_visible !== undefined) {
+      statsVisible = map.stats_visible;
+      setStatsVisible(statsVisible);
     }
     if (map.servicio_opciones) {
       rebuildServiceDropdown(map.servicio_opciones);
