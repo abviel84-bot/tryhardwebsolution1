@@ -187,6 +187,14 @@
     .proyecto-field[contenteditable="true"]:hover {
       background-color: rgba(254, 228, 0, 0.08);
     }
+    .cliente-field[contenteditable="true"] {
+      outline: 1px dashed #fee400;
+      outline-offset: 2px;
+      cursor: text;
+    }
+    .cliente-field[contenteditable="true"]:hover {
+      background-color: rgba(254, 228, 0, 0.08);
+    }
     body.admin-edit-active .section-edit-btn {
       display: inline-flex !important;
     }
@@ -321,6 +329,11 @@
   </style>
 </head>
 <body class="bg-background text-on-surface font-body-md antialiased selection:bg-primary-fixed selection:text-surface-container-lowest pb-24 md:pb-0">
+<!-- Pantalla de carga: tapa el contenido de fábrica hasta que cargan tus datos reales -->
+<div id="page-loading-overlay" style="position:fixed;inset:0;z-index:9999;background:#131313;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;transition:opacity 0.3s ease;">
+<span class="material-symbols-outlined text-primary-fixed" style="font-size:32px;" data-icon="terminal">terminal</span>
+<span style="font-family:'JetBrains Mono',monospace;color:#cec7aa;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;">Cargando...</span>
+</div>
 <!-- TopAppBar: Shared Component JSON Execution -->
 <header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-space-4 py-space-3 bg-surface border-b border-surface-variant">
 <div class="flex items-center gap-space-2 cursor-pointer select-none" id="admin-trigger" title="">
@@ -429,25 +442,14 @@
 <p class="text-center text-label-mono-sm font-label-mono-sm text-secondary uppercase tracking-widest mb-space-4">
         NEGOCIOS QUE CONFÍAN EN SOLUCIONES DIGITALES
       </p>
-<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-space-2">
-<div class="flex items-center justify-center p-space-3 bg-surface-container border border-surface-variant text-label-mono-md font-label-mono-md text-on-surface hover:border-primary-fixed transition-colors">
-          PAWDOCATION PR
-        </div>
-<div class="flex items-center justify-center p-space-3 bg-surface-container border border-surface-variant text-label-mono-md font-label-mono-md text-on-surface hover:border-primary-fixed transition-colors">
-          HAPPY CHALETS
-        </div>
-<div class="flex items-center justify-center p-space-3 bg-surface-container border border-surface-variant text-label-mono-md font-label-mono-md text-on-surface hover:border-primary-fixed transition-colors">
-          MANOS CREATIVAS
-        </div>
-<div class="flex items-center justify-center p-space-3 bg-surface-container border border-surface-variant text-label-mono-md font-label-mono-md text-on-surface hover:border-primary-fixed transition-colors">
-          EPW WRESTLING
-        </div>
-<div class="flex items-center justify-center p-space-3 bg-surface-container border border-surface-variant text-label-mono-md font-label-mono-md text-on-surface hover:border-primary-fixed transition-colors">
-          ZOOMIES PR
-        </div>
-<div class="flex items-center justify-center p-space-3 bg-surface-container-high border border-dashed border-primary-fixed text-label-mono-md font-label-mono-md text-primary-fixed font-bold">
-          + TU NEGOCIO AQUÍ
-        </div>
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-space-2" id="clientes-grid"></div>
+<div class="hidden justify-center mt-space-4" id="btn-add-cliente-wrap">
+<button class="admin-btn admin-btn-save" id="btn-add-cliente" type="button">
+  <span class="material-symbols-outlined text-sm">add</span> Agregar negocio
+</button>
+<button class="admin-btn admin-btn-save" id="btn-save-clientes" type="button">
+  <span class="material-symbols-outlined text-sm">save</span> Guardar Negocios
+</button>
 </div>
 </div>
 </section>
@@ -1259,20 +1261,109 @@ Auditoría y Optimización</div>
     });
   });
 
+  // ---------- Clientes / negocios que confían (dinámico) ----------
+  const DEFAULT_CLIENTES = ["PAWDOCATION PR", "HAPPY CHALETS", "MANOS CREATIVAS", "EPW WRESTLING", "ZOOMIES PR"];
+  let clientesActuales = [...DEFAULT_CLIENTES];
+
+  function renderClientes() {
+    const grid = document.getElementById("clientes-grid");
+    if (!grid) return;
+    grid.innerHTML = "";
+    clientesActuales.forEach((nombre, idx) => {
+      const box = document.createElement("div");
+      box.className = "flex items-center justify-center p-space-3 bg-surface-container border border-surface-variant text-label-mono-md font-label-mono-md text-on-surface hover:border-primary-fixed transition-colors relative";
+      box.innerHTML = `
+        <button type="button" class="cliente-del-btn hidden absolute -top-2 -right-2 w-5 h-5 items-center justify-center bg-error text-on-error text-xs font-bold" data-idx="${idx}" title="Quitar">✕</button>
+        <span class="cliente-field" data-idx="${idx}" style="text-align:center;">${nombre}</span>
+      `;
+      grid.appendChild(box);
+    });
+    grid.querySelectorAll(".cliente-del-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const i = parseInt(btn.getAttribute("data-idx"), 10);
+        clientesActuales.splice(i, 1);
+        renderClientes();
+        if (document.body.classList.contains("admin-edit-active")) applyClientesEditMode();
+      });
+    });
+  }
+  function applyClientesEditMode() {
+    document.querySelectorAll(".cliente-field").forEach((el) => {
+      el.setAttribute("contenteditable", "true");
+      el.setAttribute("spellcheck", "false");
+    });
+    document.querySelectorAll(".cliente-del-btn").forEach((btn) => {
+      btn.classList.remove("hidden");
+      btn.classList.add("flex");
+    });
+    const addWrap = document.getElementById("btn-add-cliente-wrap");
+    if (addWrap) { addWrap.classList.remove("hidden"); addWrap.classList.add("flex"); }
+  }
+  function disableClientesEditMode() {
+    document.querySelectorAll(".cliente-field").forEach((el) => el.removeAttribute("contenteditable"));
+    document.querySelectorAll(".cliente-del-btn").forEach((btn) => {
+      btn.classList.add("hidden");
+      btn.classList.remove("flex");
+    });
+    const addWrap = document.getElementById("btn-add-cliente-wrap");
+    if (addWrap) { addWrap.classList.add("hidden"); addWrap.classList.remove("flex"); }
+  }
+  function collectClientesFromDOM() {
+    return Array.from(document.querySelectorAll(".cliente-field")).map((el) => el.textContent.trim()).filter(Boolean);
+  }
+  document.getElementById("btn-add-cliente").addEventListener("click", () => {
+    clientesActuales.push("NUEVO NEGOCIO");
+    renderClientes();
+    applyClientesEditMode();
+  });
+  document.getElementById("btn-save-clientes").addEventListener("click", async () => {
+    if (!db || !isAdmin) return;
+    clientesActuales = collectClientesFromDOM();
+    try {
+      await db.collection("config").doc("site").set({ clientes_json: JSON.stringify(clientesActuales) }, { merge: true });
+      renderClientes();
+      applyClientesEditMode();
+      alert("Negocios guardados correctamente ✅");
+    } catch (err) {
+      alert("No se pudo guardar: " + err.message);
+    }
+  });
+
   // ---------- 1) Cargar configuración pública del sitio ----------
   const LOCAL_CACHE_KEY = "tryhardweb_config_cache_v1";
 
+  function ocultarPantallaCarga() {
+    const overlay = document.getElementById("page-loading-overlay");
+    if (!overlay) return;
+    overlay.style.opacity = "0";
+    setTimeout(() => overlay.remove(), 300);
+  }
+  // Por si algo falla (sin internet, Firebase mal configurado, etc.) no dejar la pantalla de carga trabada
+  setTimeout(ocultarPantallaCarga, 3000);
+
   async function loadConfig() {
     // 1) Aplica de inmediato lo último guardado en este navegador (sin esperar a Firebase)
+    let tenemosCache = false;
     try {
       const cached = localStorage.getItem(LOCAL_CACHE_KEY);
-      if (cached) applyConfig(JSON.parse(cached));
-      else { renderServicios(); renderPortafolio(); }
+      if (cached) {
+        applyConfig(JSON.parse(cached));
+        tenemosCache = true;
+      } else {
+        renderServicios();
+        renderPortafolio();
+        renderClientes();
+      }
     } catch (e) {
       renderServicios();
       renderPortafolio();
+      renderClientes();
     }
-    if (!db) return;
+    if (tenemosCache) ocultarPantallaCarga(); // ya tenemos algo válido que mostrar, no hay que esperar
+    if (!db) {
+      ocultarPantallaCarga();
+      return;
+    }
     // 2) Confirma/actualiza en segundo plano con los datos reales de Firebase
     try {
       const doc = await db.collection("config").doc("site").get();
@@ -1285,6 +1376,8 @@ Auditoría y Optimización</div>
       }
     } catch (e) {
       console.error("Error cargando config:", e.message);
+    } finally {
+      ocultarPantallaCarga();
     }
   }
 
@@ -1309,6 +1402,14 @@ Auditoría y Optimización</div>
         renderPortafolio();
       } catch (e) {
         console.error("portafolio_json inválido:", e);
+      }
+    }
+    if (map.clientes_json) {
+      try {
+        clientesActuales = JSON.parse(map.clientes_json);
+        renderClientes();
+      } catch (e) {
+        console.error("clientes_json inválido:", e);
       }
     }
     if (map.hero_photo_url !== undefined) {
@@ -1414,6 +1515,7 @@ Auditoría y Optimización</div>
     document.body.classList.add("admin-edit-active");
     applyServiciosEditMode();
     applyPortafolioEditMode();
+    applyClientesEditMode();
     document.querySelectorAll(".image-edit-controls").forEach((el) => {
       el.classList.remove("hidden");
       el.classList.add("flex");
@@ -1429,6 +1531,7 @@ Auditoría y Optimización</div>
     const addWrap = document.getElementById("btn-add-servicio-wrap");
     if (addWrap) addWrap.classList.add("hidden");
     disablePortafolioEditMode();
+    disableClientesEditMode();
     document.querySelectorAll(".image-edit-controls").forEach((el) => {
       el.classList.add("hidden");
       el.classList.remove("flex");
